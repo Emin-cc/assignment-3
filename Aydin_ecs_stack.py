@@ -11,14 +11,14 @@ from aws_cdk import (
     core
 )
 
-class KoundalEcsStack(core.Stack):
+class aydinEcsStack(core.Stack):
 
     def __init__(self, scope: core.Construct, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
 
         # Create VPC with public and private subnets
         vpc = ec2.Vpc(
-            self, "KoundalVpc",
+            self, "aydinVpc",
             max_azs=2,
             subnet_configuration=[
                 ec2.SubnetConfiguration(
@@ -36,21 +36,21 @@ class KoundalEcsStack(core.Stack):
 
         # Create ECR repository
         ecr_repo = ecr.Repository(
-            self, "KoundalEcrRepo",
-            repository_name="koundal-flask-app",
+            self, "aydinEcrRepo",
+            repository_name="aydin-api",
             image_scan_on_push=True
         )
 
         # Create ECS Cluster
         cluster = ecs.Cluster(
-            self, "KoundalEcsCluster",
+            self, "aydinEcsCluster",
             vpc=vpc,
-            cluster_name="koundal-flask-cluster"
+            cluster_name="aydin-flask-cluster"
         )
 
         # Create Fargate Service with Application Load Balancer
         fargate_service = ecs_patterns.ApplicationLoadBalancedFargateService(
-            self, "KoundalFargateService",
+            self, "aydinFargateService",
             cluster=cluster,
             memory_limit_mib=512,
             cpu=256,
@@ -74,7 +74,7 @@ class KoundalEcsStack(core.Stack):
 
         # Security Group for ALB
         alb_sg = ec2.SecurityGroup(
-            self, "KoundalAlbSg",
+            self, "aydinAlbSg",
             vpc=vpc,
             description="Allow HTTP traffic to ALB",
             allow_all_outbound=True
@@ -87,7 +87,7 @@ class KoundalEcsStack(core.Stack):
 
         # Security Group for ECS Tasks
         ecs_sg = ec2.SecurityGroup(
-            self, "KoundalEcsSg",
+            self, "aydinEcsSg",
             vpc=vpc,
             description="Allow traffic only from ALB",
             allow_all_outbound=True
@@ -100,8 +100,8 @@ class KoundalEcsStack(core.Stack):
 
         # CodeBuild Project
         build_project = codebuild.PipelineProject(
-            self, "KoundalBuildProject",
-            project_name="koundal-flask-build",
+            self, "aydinBuildProject",
+            project_name="aydin-flask-build",
             environment=codebuild.BuildEnvironment(
                 build_image=codebuild.LinuxBuildImage.STANDARD_5_0,
                 privileged=True
@@ -126,8 +126,8 @@ class KoundalEcsStack(core.Stack):
         build_output = codepipeline.Artifact()
 
         pipeline = codepipeline.Pipeline(
-            self, "KoundalPipeline",
-            pipeline_name="koundal-flask-pipeline",
+            self, "aydinPipeline",
+            pipeline_name="aydin-flask-pipeline",
             stages=[
                 codepipeline.StageProps(
                     stage_name="Source",
