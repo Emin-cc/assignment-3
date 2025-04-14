@@ -19,6 +19,6 @@ phases:
       - docker push $ECR_REPO_URI:latest
       - docker push $ECR_REPO_URI:$CODEBUILD_RESOLVED_SOURCE_VERSION
       - echo Writing image definitions file...
-      - printf '[{"name":"koundal-flask-container","imageUri":"%s"}]' $ECR_REPO_URI:$CODEBUILD_RESOLVED_SOURCE_VERSION > imagedefinitions.json
+      - printf '[{"name":"aydin-api","imageUri":"%s"}]' $ECR_REPO_URI:$CODEBUILD_RESOLVED_SOURCE_VERSION > imagedefinitions.json
 artifacts:
   files: imagedefinitions.json
